@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { AuthProvider } from '../contexts/AuthContext';
 
 export default function Home() {
@@ -8,10 +9,11 @@ export default function Home() {
       <div className="min-h-screen bg-gray-900 text-white">
         {/* Hero Section */}
         <section className="relative overflow-hidden">
-          <img 
+          <Image 
             src="/images/techbanner.jpg"
             alt="Tech Showcase"
-            className="w-full h-96 object-cover"
+            fill
+            className="object-cover"
           />
           <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
             <div className="text-center px-4">

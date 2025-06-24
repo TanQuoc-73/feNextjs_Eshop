@@ -49,21 +49,18 @@ export default function CartDD() {
   const fetchCartItems = async () => {
     try {
       setLoading(true);
-      // Generate a session ID if it doesn't exist
       const sessionId = localStorage.getItem('sessionId') || crypto.randomUUID();
       localStorage.setItem('sessionId', sessionId);
 
-      // Sử dụng API URL từ env
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-       
-      // Kiểm tra kết nối trước
+
       try {
         const healthCheck = await fetch(`${apiUrl}/api/health`);
         if (!healthCheck.ok) {
-          throw new Error('Không thể kết nối đến máy chủ');
+          throw new Error('Cannot connect to server');
         }
-      } catch (healthError) {
-        throw new Error('Máy chủ không phản hồi. Vui lòng thử lại sau.');
+      } catch {
+        throw new Error('Server not responding. Please try again later.');
       }
 
       const response = await fetch(`${apiUrl}/api/cart`, {

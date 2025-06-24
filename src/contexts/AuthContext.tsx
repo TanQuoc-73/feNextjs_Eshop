@@ -60,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!healthCheck.ok) {
           throw new Error('Cannot connect to server');
         }
-      } catch (healthError) {
+      } catch {
         throw new Error('Server not responding. Please try again later.');
       }
 
