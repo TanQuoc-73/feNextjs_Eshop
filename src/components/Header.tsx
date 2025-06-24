@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ShoppingCartIcon, Bars3Icon, XMarkIcon, MagnifyingGlassIcon, UserIcon } from '@heroicons/react/24/outline';
+import ProfileDropdown from './dropdowns/ProfileDropdown';
 import BrandDD from './dropdowns/BrandDD';
 import CartDD from './dropdowns/CartDD';
 import AuthModal from './modals/AuthModal';
@@ -48,25 +49,7 @@ export default function Header() {
         <div className="flex items-center gap-4 md:gap-6">
           {/* User/Auth Button */}
           {user ? (
-            <div className="hidden md:flex items-center gap-4">
-              <Link 
-                href="/account"
-                className="flex items-center gap-1 text-gray-300 hover:text-purple-400 transition-colors"
-                aria-label="Tài khoản"
-              >
-                <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
-                  <UserIcon className="w-5 h-5 text-white" />
-                </div>
-                <span className="text-sm ml-1">{user.name || 'Tài khoản'}</span>
-              </Link>
-              <button
-                onClick={logout}
-                className="text-sm text-gray-400 hover:text-red-400 transition-colors"
-                aria-label="Đăng xuất"
-              >
-                Đăng xuất
-              </button>
-            </div>
+            <ProfileDropdown />
           ) : (
             <button 
               onClick={openAuthModal}
