@@ -6,12 +6,14 @@ import { ShoppingCartIcon, Bars3Icon, XMarkIcon, MagnifyingGlassIcon, UserIcon }
 import BrandDD from './dropdowns/BrandDD';
 import CartDD from './dropdowns/CartDD';
 import AuthModal from './modals/AuthModal';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Header() {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const { user, logout } = useAuth();
 
-  const toggleMobileMenu = () => setMobileOpen(!mobileOpen);
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const openAuthModal = () => setIsAuthModalOpen(true);
   const closeAuthModal = () => setIsAuthModalOpen(false);
 
@@ -58,7 +60,7 @@ export default function Header() {
 
           {/* Mobile hamburger */}
           <button className="md:hidden" onClick={toggleMobileMenu} aria-label="Toggle menu">
-            {mobileOpen ? (
+            {isMobileMenuOpen ? (
               <XMarkIcon className="w-7 h-7 text-gray-300" />
             ) : (
               <Bars3Icon className="w-7 h-7 text-gray-300" />
@@ -68,7 +70,7 @@ export default function Header() {
       </div>
 
       {/* Mobile menu */}
-      {mobileOpen && (
+      {isMobileMenuOpen && (
         <div className="md:hidden bg-gray-900 border-t border-purple-600 shadow-lg">
           <nav className="flex flex-col p-4 space-y-3 text-gray-300">
             <Link href="/" className="hover:text-purple-400 transition-colors py-2" onClick={toggleMobileMenu}>Home</Link>
@@ -76,16 +78,29 @@ export default function Header() {
             <Link href="/products" className="hover:text-purple-400 transition-colors py-2" onClick={toggleMobileMenu}>Products</Link>
             <Link href="/brands" className="hover:text-purple-400 transition-colors py-2" onClick={toggleMobileMenu}>Brands</Link>
             <Link href="/cart" className="hover:text-purple-400 transition-colors py-2" onClick={toggleMobileMenu}>Cart</Link>
-            <button 
-              className="w-full text-left hover:text-purple-400 transition-colors py-2 flex items-center gap-2" 
-              onClick={() => {
-                toggleMobileMenu();
-                openAuthModal();
-              }}
-            >
-              <UserIcon className="w-5 h-5" />
-              <span>Đăng nhập</span>
-            </button>
+            {user ? (
+              <button 
+                className="w-full text-left hover:text-purple-400 transition-colors py-2 flex items-center gap-2"
+                onClick={() => {
+                  toggleMobileMenu();
+                  logout();
+                }}
+              >
+                <UserIcon className="w-5 h-5" />
+                <span>Đăng xuất</span>
+              </button>
+            ) : (
+              <button 
+                className="w-full text-left hover:text-purple-400 transition-colors py-2 flex items-center gap-2" 
+                onClick={() => {
+                  toggleMobileMenu();
+                  openAuthModal();
+                }}
+              >
+                <UserIcon className="w-5 h-5" />
+                <span>Đăng nhập</span>
+              </button>
+            )}
             <Link href="/about" className="hover:text-purple-400 transition-colors py-2" onClick={toggleMobileMenu}>About</Link>
           </nav>
         </div>
