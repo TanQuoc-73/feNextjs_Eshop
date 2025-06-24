@@ -45,28 +45,69 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       setError(null);
       setSuccess(null);
+      
+      // Reset trạng thái trước khi gọi API
+      setUser(null);
+      setToken(null);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
 
-      const response = await fetch('http://localhost:3001/api/auth/login', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      
+      // Kiểm tra kết nối trước
+      try {
+        const healthCheck = await fetch(`${apiUrl}/api/health`);
+        if (!healthCheck.ok) {
+          throw new Error('Không thể kết nối đến máy chủ');
+        }
+      } catch (healthError) {
+        throw new Error('Máy chủ không phản hồi. Vui lòng thử lại sau.');
+      }
+
+      const response = await fetch(`${apiUrl}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
+        credentials: 'include', // Quan trọng cho session/cookie
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Đăng nhập thất bại');
+      // Nếu không phải response JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('Non-JSON response:', text);
+        throw new Error('Phản hồi không hợp lệ từ máy chủ');
       }
 
       const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || `Đăng nhập thất bại (${response.status})`);
+      }
+
+      if (!data.token || !data.user) {
+        throw new Error('Dữ liệu đăng nhập không hợp lệ');
+      }
+
+      // Cập nhật state và localStorage
       setToken(data.token);
       setUser(data.user);
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       setSuccess('Đăng nhập thành công');
+      
+      return data;
     } catch (error: any) {
-      setError(error.message || 'Đã xảy ra lỗi khi đăng nhập');
+      console.error('Login error:', error);
+      const errorMessage = error.message === 'Failed to fetch' 
+        ? 'Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng.' 
+        : error.message;
+      
+      setError(errorMessage);
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -112,7 +153,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, error, success, login, register, logout }}>
+    <AuthContext.Provider value={{
+      user,
+      token,
+      loading,
+      error,
+      success,
+      login,
+      register,
+      logout
+    }}>
       {children}
     </AuthContext.Provider>
   );

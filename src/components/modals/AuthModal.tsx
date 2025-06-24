@@ -15,9 +15,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [isSwitching, setIsSwitching] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const { login, register } = useAuth();
+  const { login, register, error, success } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -27,11 +25,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    setSuccess(null);
 
     if (!formData.email || !formData.password || (!isLogin && !formData.name)) {
-      setError('Vui lòng điền đầy đủ thông tin');
       setLoading(false);
       return;
     }
@@ -39,17 +34,18 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     try {
       if (isLogin) {
         await login(formData.email, formData.password);
-        setSuccess('Đăng nhập thành công!');
       } else {
         await register(formData.name, formData.email, formData.password);
-        setSuccess('Đăng ký thành công!');
       }
+      
+      // Đóng modal sau 1 giây nếu thành công
       setTimeout(() => {
         onClose();
-        window.location.href = '/';
-      }, 2000);
-    } catch (err: any) {
-      setError(err.message || 'Đã xảy ra lỗi');
+        // Làm mới trang để cập nhật UI
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.error('Auth error:', error);
     } finally {
       setLoading(false);
     }
@@ -64,6 +60,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     }, 300);
   };
 
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -71,11 +73,11 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-          onClick={onClose}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          onClick={handleBackdropClick}
         >
           <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
+            initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ duration: 0.3 }}
@@ -84,9 +86,10 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           >
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-300"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-500"
+              disabled={loading}
             >
-              <XMarkIcon className="w-6 h-6" />
+              <XMarkIcon className="h-6 w-6" />
             </button>
 
             <h2 className="text-2xl font-semibold text-white text-center mb-4">

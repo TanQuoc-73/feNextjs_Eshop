@@ -11,7 +11,7 @@ import { useAuth } from '../contexts/AuthContext';
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const openAuthModal = () => setIsAuthModalOpen(true);
@@ -46,15 +46,38 @@ export default function Header() {
 
         {/* Icons */}
         <div className="flex items-center gap-4 md:gap-6">
-          {/* Login Button */}
-          <button 
-            onClick={openAuthModal}
-            className="hidden md:flex items-center gap-1 text-gray-300 hover:text-purple-400 transition-colors"
-            aria-label="Login"
-          >
-            <UserIcon className="w-6 h-6" />
-            <span className="text-sm ml-1">Login</span>
-          </button>
+          {/* User/Auth Button */}
+          {user ? (
+            <div className="hidden md:flex items-center gap-4">
+              <Link 
+                href="/account"
+                className="flex items-center gap-1 text-gray-300 hover:text-purple-400 transition-colors"
+                aria-label="Tài khoản"
+              >
+                <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
+                  <UserIcon className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-sm ml-1">{user.name || 'Tài khoản'}</span>
+              </Link>
+              <button
+                onClick={logout}
+                className="text-sm text-gray-400 hover:text-red-400 transition-colors"
+                aria-label="Đăng xuất"
+              >
+                Đăng xuất
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={openAuthModal}
+              className="hidden md:flex items-center gap-1 text-gray-300 hover:text-purple-400 transition-colors"
+              aria-label="Đăng nhập"
+              disabled={loading}
+            >
+              <UserIcon className="w-6 h-6" />
+              <span className="text-sm ml-1">Đăng nhập</span>
+            </button>
+          )}
           
           <CartDD />
 
