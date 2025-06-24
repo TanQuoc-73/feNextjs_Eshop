@@ -93,7 +93,7 @@ export default function Header() {
                 }}
               >
                 <UserIcon className="w-5 h-5" />
-                <span>Đăng xuất</span>
+                <span>Log out</span>
               </button>
             ) : (
               <button 
@@ -104,7 +104,7 @@ export default function Header() {
                 }}
               >
                 <UserIcon className="w-5 h-5" />
-                <span>Đăng nhập</span>
+                <span>Login</span>
               </button>
             )}
             <Link href="/about" className="hover:text-purple-400 transition-colors py-2" onClick={toggleMobileMenu}>About</Link>
