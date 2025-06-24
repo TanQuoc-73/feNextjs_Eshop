@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ShoppingCartIcon, Bars3Icon, XMarkIcon, MagnifyingGlassIcon, UserIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, XMarkIcon, MagnifyingGlassIcon, UserIcon } from '@heroicons/react/24/outline';
 import ProfileDropdown from './dropdowns/ProfileDropdown';
 import BrandDD from './dropdowns/BrandDD';
 import CartDD from './dropdowns/CartDD';

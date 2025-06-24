@@ -100,12 +100,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSuccess('Login successful');
       
       return data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
-      const errorMessage = error.message === 'Failed to fetch' 
-        ? 'Cannot connect to server. Please check your connection.' 
-        : error.message;
-      
+      let errorMessage = 'Unknown error occurred';
+      if (error instanceof Error) {
+        errorMessage = error.message === 'Failed to fetch'
+          ? 'Cannot connect to server. Please check your connection.'
+          : error.message;
+      }
       setError(errorMessage);
       throw error;
     } finally {
@@ -138,8 +140,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       setSuccess('Đăng ký thành công');
-    } catch (error: any) {
-      setError(error.message || 'Đã xảy ra lỗi khi đăng ký');
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : 'Registration failed';
+      setError(msg);
     } finally {
       setLoading(false);
     }
