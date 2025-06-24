@@ -5,6 +5,40 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 
+// Translation constants
+const translations = {
+  modal: {
+    title: 'Authentication',
+    close: 'Close',
+    login: {
+      title: 'Login',
+      email: 'Email',
+      password: 'Password',
+      submit: 'Login',
+      or: 'OR',
+      register: 'Create new account'
+    },
+    register: {
+      title: 'Register',
+      name: 'Full name',
+      email: 'Email',
+      password: 'Password',
+      submit: 'Register',
+      or: 'OR',
+      login: 'Already have an account? Login'
+    }
+  },
+  errors: {
+    required: 'This field is required',
+    email: 'Please enter a valid email address',
+    password: 'Password must be at least 6 characters'
+  },
+  success: {
+    login: 'Login successful',
+    register: 'Registration successful'
+  }
+};
+
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -93,7 +127,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </button>
 
             <h2 className="text-2xl font-semibold text-white text-center mb-4">
-              {isLogin ? 'Đăng nhập' : 'Đăng ký'}
+              {isLogin ? translations.modal.login.title : translations.modal.register.title}
             </h2>
 
             {error && <p className="p-3 mb-4 text-sm text-red-400 bg-red-500/10 rounded-md">{error}</p>}
@@ -102,14 +136,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
                 <div>
-                  <label htmlFor="name" className="block text-sm text-gray-300 mb-1">Họ và tên</label>
+                  <label htmlFor="name" className="block text-sm text-gray-300 mb-1">{translations.modal.register.name}</label>
                   <input
                     type="text"
                     id="name"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder="Họ và tên"
+                    placeholder={translations.modal.register.name}
                     className="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
                     required
                   />
@@ -117,28 +151,28 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               )}
 
               <div>
-                <label htmlFor="email" className="block text-sm text-gray-300 mb-1">Email</label>
+                <label htmlFor="email" className="block text-sm text-gray-300 mb-1">{translations.modal.login.email}</label>
                 <input
                   type="email"
                   id="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="Email"
+                  placeholder={translations.modal.login.email}
                   className="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm text-gray-300 mb-1">Mật khẩu</label>
+                <label htmlFor="password" className="block text-sm text-gray-300 mb-1">{translations.modal.login.password}</label>
                 <input
                   type="password"
                   id="password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="Mật khẩu"
+                  placeholder={translations.modal.login.password}
                   className="w-full px-4 py-2 rounded-md bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
                   required
                 />
@@ -152,7 +186,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 whileTap={{ scale: 0.98 }}
               >
                 {loading && <motion.div className="absolute inset-0 bg-white/10 animate-pulse" />}
-                <span className="relative z-10">{isLogin ? 'Đăng nhập' : 'Đăng ký'}</span>
+                <span className="relative z-10">{isLogin ? translations.modal.login.submit : translations.modal.register.submit}</span>
               </motion.button>
             </form>
 
@@ -163,7 +197,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               transition={{ delay: 0.2 }}
             >
               <span className="text-sm text-gray-400">
-                {isLogin ? 'Chưa có tài khoản?' : 'Đã có tài khoản?'}
+                {isLogin ? 'Don\'t have an account?' : 'Already have an account?'}
               </span>
               <motion.button
                 onClick={toggleAuthMode}
@@ -177,7 +211,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {isLogin ? 'Đăng ký' : 'Đăng nhập'}
+                  {isLogin ? 'Register' : 'Login'}
                 </motion.span>
               </motion.button>
             </motion.div>
@@ -213,7 +247,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05" />
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
               </svg>
-              <span className="text-sm font-medium">Tiếp tục với Google</span>
+              <span className="text-sm font-medium">Continue with Google</span>
             </button>
           </motion.div>
         </motion.div>

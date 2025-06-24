@@ -54,11 +54,11 @@ export default function Header() {
             <button 
               onClick={openAuthModal}
               className="hidden md:flex items-center gap-1 text-gray-300 hover:text-purple-400 transition-colors"
-              aria-label="Đăng nhập"
+              aria-label="Login"
               disabled={loading}
             >
               <UserIcon className="w-6 h-6" />
-              <span className="text-sm ml-1">Đăng nhập</span>
+              <span className="text-sm ml-1">Login</span>
             </button>
           )}
           

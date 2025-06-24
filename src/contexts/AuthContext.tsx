@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setError(null);
       setSuccess(null);
       
-      // Reset trạng thái trước khi gọi API
+      // Reset state before API call
       setUser(null);
       setToken(null);
       localStorage.removeItem('token');
@@ -54,14 +54,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       
-      // Kiểm tra kết nối trước
+      // Check connection first
       try {
         const healthCheck = await fetch(`${apiUrl}/api/health`);
         if (!healthCheck.ok) {
-          throw new Error('Không thể kết nối đến máy chủ');
+          throw new Error('Cannot connect to server');
         }
       } catch (healthError) {
-        throw new Error('Máy chủ không phản hồi. Vui lòng thử lại sau.');
+        throw new Error('Server not responding. Please try again later.');
       }
 
       const response = await fetch(`${apiUrl}/api/auth/login`, {
@@ -71,39 +71,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           'Accept': 'application/json',
         },
         body: JSON.stringify({ email, password }),
-        credentials: 'include', // Quan trọng cho session/cookie
+        credentials: 'include',
       });
 
-      // Nếu không phải response JSON
+      // If not JSON response
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
         const text = await response.text();
         console.error('Non-JSON response:', text);
-        throw new Error('Phản hồi không hợp lệ từ máy chủ');
+        throw new Error('Invalid response from server');
       }
 
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.error || `Đăng nhập thất bại (${response.status})`);
+        throw new Error(data.error || `Login failed (${response.status})`);
       }
 
       if (!data.token || !data.user) {
-        throw new Error('Dữ liệu đăng nhập không hợp lệ');
+        throw new Error('Invalid login data');
       }
 
-      // Cập nhật state và localStorage
+      // Update state and localStorage
       setToken(data.token);
       setUser(data.user);
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      setSuccess('Đăng nhập thành công');
+      setSuccess('Login successful');
       
       return data;
     } catch (error: any) {
       console.error('Login error:', error);
       const errorMessage = error.message === 'Failed to fetch' 
-        ? 'Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng.' 
+        ? 'Cannot connect to server. Please check your connection.' 
         : error.message;
       
       setError(errorMessage);

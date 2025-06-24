@@ -53,16 +53,42 @@ export default function CartDD() {
       const sessionId = localStorage.getItem('sessionId') || crypto.randomUUID();
       localStorage.setItem('sessionId', sessionId);
 
-      const response = await fetch('http://localhost:3001/api/cart', {
+      // Sử dụng API URL từ env
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+       
+      // Kiểm tra kết nối trước
+      try {
+        const healthCheck = await fetch(`${apiUrl}/api/health`);
+        if (!healthCheck.ok) {
+          throw new Error('Không thể kết nối đến máy chủ');
+        }
+      } catch (healthError) {
+        throw new Error('Máy chủ không phản hồi. Vui lòng thử lại sau.');
+      }
+
+      const response = await fetch(`${apiUrl}/api/cart`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
           'Session-ID': sessionId
-        }
+        },
+        credentials: 'include' // Quan trọng cho session/cookie
       });
 
-      if (!response.ok) throw new Error('Failed to fetch cart items');
+      // Kiểm tra response
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.error || `Lỗi khi lấy giỏ hàng (${response.status})`);
+      }
+
       const data = await response.json();
+       
+      // Kiểm tra dữ liệu trả về
+      if (!Array.isArray(data)) {
+        throw new Error('Dữ liệu giỏ hàng không hợp lệ');
+      }
+
       setCartItems(data);
       setError(null);
     } catch (err) {

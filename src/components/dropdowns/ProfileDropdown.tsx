@@ -6,6 +6,15 @@ import { UserIcon, ChevronDownIcon, ArrowLeftOnRectangleIcon } from '@heroicons/
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
 
+// Translation constants
+const translations = {
+  profile: {
+    title: 'Profile',
+    account: 'My Account',
+    logout: 'Logout'
+  }
+};
+
 export default function ProfileDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuth();
@@ -16,12 +25,12 @@ export default function ProfileDropdown() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1 text-gray-300 hover:text-purple-400 transition-colors"
-        aria-label="Tài khoản"
+        aria-label="Profile"
       >
         <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
           <UserIcon className="w-5 h-5 text-white" />
         </div>
-        <span className="text-sm ml-1">{user?.name || 'Tài khoản'}</span>
+        <span className="text-sm ml-1">{user?.name || translations.profile.title}</span>
         <ChevronDownIcon className="w-4 h-4 ml-1" />
       </button>
 
@@ -43,7 +52,7 @@ export default function ProfileDropdown() {
               >
                 <div className="flex items-center gap-2">
                   <UserIcon className="w-4 h-4 text-gray-500" />
-                  <span>Tài khoản của tôi</span>
+                  <span>{translations.profile.account}</span>
                 </div>
               </Link>
 
@@ -57,7 +66,7 @@ export default function ProfileDropdown() {
               >
                 <div className="flex items-center gap-2">
                   <ArrowLeftOnRectangleIcon className="w-4 h-4 text-red-500" />
-                  <span>Đăng xuất</span>
+                  <span>{translations.profile.logout}</span>
                 </div>
               </button>
             </div>
