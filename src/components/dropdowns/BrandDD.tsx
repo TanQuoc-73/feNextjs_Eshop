@@ -17,7 +17,6 @@ export default function BrandDD() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [closing, setClosing] = useState(false);
   const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = () => {
@@ -25,18 +24,13 @@ export default function BrandDD() {
       clearTimeout(closeTimeout);
       setCloseTimeout(null);
     }
-    setClosing(false);
     setIsOpen(true);
   };
 
   const handleMouseLeave = () => {
-    setClosing(true);
     const timer = setTimeout(() => {
-      if (closing) {
-        setIsOpen(false);
-        setClosing(false);
-      }
-    }, 200); // Thời gian delay trước khi đóng
+      setIsOpen(false);
+    }, 200);
     setCloseTimeout(timer);
   };
 
@@ -71,11 +65,9 @@ export default function BrandDD() {
         <ChevronDownIcon className="w-4 h-4 ml-1 -mr-1" aria-hidden="true" />
       </button>
 
-      {(isOpen || closing) && (
+      {isOpen && (
         <div 
-          className={`absolute left-0 mt-1 w-72 max-h-96 overflow-y-auto rounded-lg bg-gray-800 shadow-lg ring-1 ring-purple-600 focus:outline-none z-50 divide-y divide-gray-700 transition-all duration-200 ${
-            closing ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
-          }`}
+          className="absolute left-0 mt-1 w-72 max-h-96 overflow-y-auto rounded-lg bg-gray-800 shadow-lg ring-1 ring-purple-600 focus:outline-none z-50 divide-y divide-gray-700 transition-all duration-200"
         >
         <div className="p-2">
           <h3 className="px-3 py-2 text-sm font-semibold text-gray-900">List Brands</h3>

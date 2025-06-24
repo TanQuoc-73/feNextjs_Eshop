@@ -2,13 +2,18 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ShoppingCartIcon, Bars3Icon, XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { ShoppingCartIcon, Bars3Icon, XMarkIcon, MagnifyingGlassIcon, UserIcon } from '@heroicons/react/24/outline';
 import BrandDD from './dropdowns/BrandDD';
+import CartDD from './dropdowns/CartDD';
+import AuthModal from './modals/AuthModal';
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const toggleMobileMenu = () => setMobileOpen(!mobileOpen);
+  const openAuthModal = () => setIsAuthModalOpen(true);
+  const closeAuthModal = () => setIsAuthModalOpen(false);
 
   return (
     <header className="fixed top-0 left-0 w-full bg-black border-b border-purple-600 shadow-lg z-50">
@@ -39,12 +44,17 @@ export default function Header() {
 
         {/* Icons */}
         <div className="flex items-center gap-4 md:gap-6">
-          <Link href="/cart" className="relative group">
-            <ShoppingCartIcon className="w-6 h-6 text-gray-300 group-hover:text-purple-400 transition-colors" />
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-              0
-            </span>
-          </Link>
+          {/* Login Button */}
+          <button 
+            onClick={openAuthModal}
+            className="hidden md:flex items-center gap-1 text-gray-300 hover:text-purple-400 transition-colors"
+            aria-label="Login"
+          >
+            <UserIcon className="w-6 h-6" />
+            <span className="text-sm ml-1">Login</span>
+          </button>
+          
+          <CartDD />
 
           {/* Mobile hamburger */}
           <button className="md:hidden" onClick={toggleMobileMenu} aria-label="Toggle menu">
@@ -65,10 +75,26 @@ export default function Header() {
             <Link href="/categories" className="hover:text-purple-400 transition-colors py-2" onClick={toggleMobileMenu}>Categories</Link>
             <Link href="/products" className="hover:text-purple-400 transition-colors py-2" onClick={toggleMobileMenu}>Products</Link>
             <Link href="/brands" className="hover:text-purple-400 transition-colors py-2" onClick={toggleMobileMenu}>Brands</Link>
+            <Link href="/cart" className="hover:text-purple-400 transition-colors py-2" onClick={toggleMobileMenu}>Cart</Link>
+            <button 
+              className="w-full text-left hover:text-purple-400 transition-colors py-2 flex items-center gap-2" 
+              onClick={() => {
+                toggleMobileMenu();
+                openAuthModal();
+              }}
+            >
+              <UserIcon className="w-5 h-5" />
+              <span>Đăng nhập</span>
+            </button>
             <Link href="/about" className="hover:text-purple-400 transition-colors py-2" onClick={toggleMobileMenu}>About</Link>
           </nav>
         </div>
       )}
+
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={closeAuthModal} 
+      />
     </header>
   );
 }
