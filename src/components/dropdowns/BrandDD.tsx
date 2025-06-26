@@ -67,10 +67,10 @@ export default function BrandDD() {
 
       {isOpen && (
         <div 
-          className="absolute left-0 mt-1 w-72 max-h-96 overflow-y-auto rounded-lg bg-gray-800 shadow-lg ring-1 ring-purple-600 focus:outline-none z-50 divide-y divide-gray-700 transition-all duration-200"
+          className="absolute left-0 mt-1 w-64 max-h-96 overflow-y-auto rounded-lg bg-gray-800 shadow-lg ring-1 ring-purple-600 focus:outline-none z-50 divide-y divide-gray-700 transition-all duration-200"
         >
         <div className="p-2">
-          <h3 className="px-3 py-2 text-sm font-semibold text-gray-900">List Brands</h3>
+          <h3 className="px-3 py-2 text-sm font-semibold text-white">List Brands</h3>
           <div className="space-y-1">
             {loading && (
               <div className="space-y-2 p-2">

@@ -47,6 +47,8 @@ export default function Header() {
 
         {/* Icons */}
         <div className="flex items-center gap-4 md:gap-6">
+          <CartDD />
+            
           {/* User/Auth Button */}
           {user ? (
             <ProfileDropdown />
@@ -62,8 +64,6 @@ export default function Header() {
             </button>
           )}
           
-          <CartDD />
-
           {/* Mobile hamburger */}
           <button className="md:hidden" onClick={toggleMobileMenu} aria-label="Toggle menu">
             {isMobileMenuOpen ? (
