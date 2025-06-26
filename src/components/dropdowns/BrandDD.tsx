@@ -7,9 +7,11 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid';
 interface Brand {
   id: number;
   name: string;
-  slug: string;
-  logo_url: string;
   description: string;
+  logoUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+  active: boolean;
 }
 
 export default function BrandDD() {
@@ -40,12 +42,31 @@ export default function BrandDD() {
 
   const fetchBrands = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/brands');
-      if (!response.ok) throw new Error('Failed to fetch brands');
+      const apiUrl = 'http://localhost:8080/api/brands';
+      console.log('Fetching brands from:', apiUrl);
+      
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        console.error('Response status:', response.status);
+        console.error('Response data:', await response.text());
+        throw new Error(errorData?.message || `Failed to fetch brands (${response.status})`);
+      }
+
       const data = await response.json();
+      console.log('Successfully fetched brands:', data);
       setBrands(data);
       setError(null);
     } catch (err) {
+      console.error('Error fetching brands:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
@@ -74,54 +95,56 @@ export default function BrandDD() {
           <div className="space-y-1">
             {loading && (
               <div className="space-y-2 p-2">
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="flex items-center space-x-3 p-2 rounded-md animate-pulse">
-                    <div className="w-10 h-10 bg-gray-200 rounded"></div>
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                      <div className="h-3 bg-gray-100 rounded w-1/2"></div>
-                    </div>
-                  </div>
-                ))}
+                <div className="flex items-center space-x-2">
+                  <div className="h-6 w-16 rounded bg-gray-700 animate-pulse"></div>
+                  <div className="h-6 w-24 rounded bg-gray-700 animate-pulse"></div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="h-6 w-16 rounded bg-gray-700 animate-pulse"></div>
+                  <div className="h-6 w-24 rounded bg-gray-700 animate-pulse"></div>
+                </div>
               </div>
             )}
             {error && (
-              <div className="px-3 py-2 text-sm text-red-500">{error}</div>
-            )}
-            {!loading && !error && brands.map((brand) => (
-              <div key={brand.id} className="hover:bg-gray-700">
-                <a
-                  href={`/thuong-hieu/${brand.slug}`}
-                  className="flex items-center p-3 transition-colors duration-150 text-gray-300 hover:text-white"
-                >
-                  {brand.logo_url ? (
-                    <div className="flex-shrink-0 w-8 h-8 relative">
-                      <Image
-                        src={brand.logo_url}
-                        alt={brand.name}
-                        fill
-                        className="object-contain"
-                        sizes="32px"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
-                      <span className="text-xs font-medium text-gray-500">
-                        {brand.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
-                  <div className="ml-3">
-                    <p className="text-sm font-medium">
-                      {brand.name}
-                    </p>
-                    {brand.description && (
-                      <p className="text-xs text-gray-400 line-clamp-1">{brand.description}</p>
-                    )}
-                  </div>
-                </a>
+              <div className="p-2 text-red-400">
+                {error}
               </div>
-            ))}
+            )}
+            {!loading && !error && (
+              <div>
+                {brands.map((brand) => (
+                  <a
+                    key={brand.id}
+                    href={`/brands/${brand.id}`}
+                    className="flex items-center p-2 hover:bg-gray-700"
+                  >
+                    <div className="flex-shrink-0 w-12 h-12 relative">
+                      {brand.logoUrl ? (
+                        <Image
+                          src={brand.logoUrl}
+                          alt={brand.name}
+                          width={40}
+                          height={40}
+                          className="rounded"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center w-12 h-12 bg-gray-700 rounded">
+                          <span className="text-sm font-medium text-gray-300">
+                            {brand.name.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-gray-300">{brand.name}</h3>
+                      {brand.description && (
+                        <p className="text-sm text-gray-500">{brand.description}</p>
+                      )}
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         </div>
