@@ -40,7 +40,7 @@ export default function BrandDD() {
 
   const fetchBrands = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/brands');
+      const response = await fetch('http://localhost:8080/api/brands');
       if (!response.ok) throw new Error('Failed to fetch brands');
       const data = await response.json();
       setBrands(data);
