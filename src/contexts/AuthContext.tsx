@@ -70,20 +70,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include',
+        body: JSON.stringify({ email, password })
       });
 
-      // If not JSON response
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const text = await response.text();
-        console.error('Non-JSON response:', text);
-        throw new Error('Invalid response from server');
-      }
-
       const data = await response.json();
-      
       if (!response.ok) {
         throw new Error(data.error || `Login failed (${response.status})`);
       }
@@ -92,13 +82,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error('Invalid login data');
       }
 
-      // Update state and localStorage
+      // Lưu token và user vào state + localStorage
       setToken(data.token);
       setUser(data.user);
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       setSuccess('Login successful');
-      
       return data;
     } catch (error: unknown) {
       console.error('Login error:', error);

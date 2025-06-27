@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -27,6 +28,7 @@ interface CartItem {
 }
 
 export default function CartDD() {
+  const auth = useAuth();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,15 +67,21 @@ export default function CartDD() {
     }
   };
 
-  const fetchCartItems = async () => {
+  
+
+const fetchCartItems = async () => {
     try {
       setLoading(true);
+      let headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      };
+      if (auth && auth.token) {
+        headers['Authorization'] = `Bearer ${auth.token}`;
+      }
       const response = await fetch(`${apiUrl}/api/cart`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
+        headers,
         credentials: 'include'
       });
 

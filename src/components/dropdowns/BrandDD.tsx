@@ -42,27 +42,26 @@ export default function BrandDD() {
 
   const fetchBrands = async () => {
     try {
-      const apiUrl = 'http://localhost:8080/api/brands';
-      console.log('Fetching brands from:', apiUrl);
-      
+      const apiUrl = 'http://localhost:8080/api/brands'; 
       const response = await fetch(apiUrl, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
-        },
-        credentials: 'include'
+        }
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        console.error('Response status:', response.status);
-        console.error('Response data:', await response.text());
-        throw new Error(errorData?.message || `Failed to fetch brands (${response.status})`);
+        const text = await response.text();
+        try {
+          const errorData = JSON.parse(text);
+          throw new Error(errorData?.message || `Failed to fetch brands (${response.status})`);
+        } catch {
+          throw new Error(`Failed to fetch brands (${response.status}): ${text}`);
+        }
       }
 
       const data = await response.json();
-      console.log('Successfully fetched brands:', data);
       setBrands(data);
       setError(null);
     } catch (err) {
@@ -106,9 +105,10 @@ export default function BrandDD() {
               </div>
             )}
             {error && (
-              <div className="p-2 text-red-400">
-                {error}
-              </div>
+              <div className="p-2 text-red-400">{error}</div>
+            )}
+            {!loading && !error && brands.length === 0 && (
+              <div className="px-3 py-2 text-sm text-gray-400">No brands available.</div>
             )}
             {!loading && !error && (
               <div>
@@ -126,6 +126,7 @@ export default function BrandDD() {
                           width={40}
                           height={40}
                           className="rounded"
+                          loading="lazy"
                         />
                       ) : (
                         <div className="flex items-center justify-center w-12 h-12 bg-gray-700 rounded">
